@@ -1,0 +1,40 @@
+.optionsContainer{
+    display: flex;
+    flex-direction: column;
+}
+
+.optionsWrapper{
+    display: flex;
+    justify-content: space-evenly;
+    padding: 0.5rem;
+    width: 60%;
+    margin: 0 auto;
+
+}
+.optionsWrapperHidden{
+    display: none;
+    justify-content: space-evenly;
+}
+
+
+.orderOptionsPanelHeader{
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+    align-items: center;
+}
+
+.resultsFounded{
+    font-size: medium;
+    font-weight: bold;
+    padding-bottom: 0.5rem;
+}
+
+
+@media only screen and (max-width: 600px) {
+    .orderOptionsPanelHeader{
+       flex-direction: column;
+    }
+
+}

@@ -1,0 +1,40 @@
+.poemContainer {
+    color: black;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 90%;
+    margin-bottom: 1rem !important;
+    border: black solid thin;
+    border-radius: 10px;
+}
+
+textarea {
+    flex: 1;
+}
+
+pre {
+    white-space: pre-wrap;
+    display: flex;
+    justify-content: center;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.info {
+    display: flex;
+    justify-content: space-around;
+    border-bottom: black solid thin;
+    margin-bottom: 1rem;
+    align-items: center;
+    background: aliceblue;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+@media only screen and (max-width: 600px) {
+    .info{
+        flex-direction: column;
+    }
+
+}

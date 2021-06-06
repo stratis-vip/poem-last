@@ -1,0 +1,14 @@
+.headerMain{
+    padding: 1rem 0;
+    background-color: dodgerblue;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+@media only screen and (max-width: 600px) {
+    .headerMain {
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,27 @@
+.navBar{
+    margin-left: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    flex:1;
+    color: white;
+}
+
+
+
+.navLink{
+    margin-right: 1rem;
+}
+
+@media only screen and (max-width: 600px) {
+    .navBar {
+        padding-top: 0.8rem;
+        font-size: large;
+        justify-content: space-between;
+        width: 80%;
+    }
+
+    .navLink{
+        margin-right: 0;
+    }
+
+}
