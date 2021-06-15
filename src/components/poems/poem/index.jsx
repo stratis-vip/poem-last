@@ -6,6 +6,7 @@ import styles from './poem.module.css'
 import global from '../../../global.module.css'
 import {useSelector} from "react-redux";
 import {Button, Loader} from "semantic-ui-react";
+import Detail from "../../detail";
 
 const showMoreText = (text, show, setShow) => {
     if (!text) return null

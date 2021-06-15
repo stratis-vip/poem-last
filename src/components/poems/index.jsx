@@ -1,76 +1,78 @@
 import React from "react";
 import {useEffect, useState} from "react"
 import {useDispatch, useSelector} from "react-redux"
-import {Button, Loader} from "semantic-ui-react"
-import {getString, sortByDate, } from '../../../src/utils.js'
+import { Loader} from "semantic-ui-react"
+import {getString, TypeOrder,} from '../../utils'
 import Poem from './poem'
 import styles from './poems.module.css'
 import global from '../../global.module.css'
-import {setLoading} from "../../features/loading-slice";
 import Search from "../container/search";
+import {useQuery} from "@apollo/client";
+import {getPoems} from "../../queries";
+import {setPoemsRefetch} from "../../features/refetch-slice";
 
 const Poems = () => {
-  const {content, order, categories, currentCategory:category, loading} = useSelector(state => state)
-  const dispatch = useDispatch()
+    const { order, currentCategory: category, categories} = useSelector(state => state)
+    const [search, setSearch] = useState(null)
+    const dispatch = useDispatch()
+    const {poems} = useSelector(s=>s.refetchQueries)
+    const {loading, error, data, refetch} = useQuery(getPoems, {
+        variables: {
+            poemsCategory: category !== 'all' ? category : undefined,
+            poemsOrder: order === TypeOrder.desc ? 'DESC' : 'ASC',
+            poemsSearch: search !== null && search.length>3 ?  `%${search}%`:undefined
+        }
+    })
 
-  const [poems, setPoems] = useState(null)
+    useEffect(async ()=>{
+        console.count(poems)
+        if(poems){
+            dispatch(setPoemsRefetch(false))
+            const v = await  refetch()
+            console.log('poem refetch ', v)
+        }
+    }, [poems])
 
-  useEffect(() => {
-    if (content && order && category) {
+    const renderPoems = () => {
+        if (error) return <h1>{error.message}</h1>
+        if (loading) {
+            return <Loader active/>
+        }
+        if (data?.poems.length === 0) return <div className={styles.resultsFounded}>Δεν υπάρχουν αποτελέσματα με αυτά τα
+            κριτήρια </div>
 
-      if (category === 'all') {
-        setPoems(sortByDate(content, 'authDate', order))
-      } else {
-        const contentByCategory = content.filter(c => c.category === category)
-        setPoems(sortByDate(contentByCategory, 'authDate', order))
-      }
-      dispatch(setLoading(false))
-    }else {
-      if (!loading){
-        dispatch(setLoading(true))
-      }
+        if (data) return (<>
+            <div
+                className={styles.resultsFounded}>{data?.poems.length > 1 ? `Βρέθηκαν ${data?.poems.length} κείμενα.` : `Βρέθηκε ${data?.poems.length} κείμενο`}</div>
+            {data?.poems.map(p => <Poem key={p.id} poem={p} category={p.category.description}/>)}
+        </>)
+
     }
-  }, [content, order, category, dispatch])
 
-  const renderPoems = () => {
-    if (loading){
-      return <Loader active />
-    }
-    if (!poems || poems.length === 0) {
-      return <div className={styles.resultsFounded}>Δεν υπάρχουν αποτελέσματα με αυτά τα κριτήρια </div>
-    } else {
-      if (poems?.length > 0) {
+    return <>
+        <div className={styles.optionsContainer}>
+            <div className={styles.orderOptionsPanelHeader}>
+                <div><label>Ταξινόμηση αποτελεσμάτων ημερολογιακά: <span
+                    className={global.boldItalic}>{orderToString(order)}</span></label></div>
+                <div><label>Φίλτρο: <span
+                    className={global.boldItalic}> {category !== 'all' ? categories.filter(c=> c.id === category)[0].description : 'όλες οι κατηγορίες'}</span></label>
+                </div>
+                <div><Search search={search} setSearch={setSearch} /></div>
+            </div>
 
-        return (<>
-          <div className={styles.resultsFounded}>{poems.length > 1? `Βρέθηκαν ${poems.length} κείμενα.`:`Βρέθηκε ${poems.length} κείμενο`}</div>
-          {poems.map(p => <Poem key={p.id} poem={p} category={categories[p.category]} />)}
-          </>)
-      }
-    }
-  }
+        </div>
+        {renderPoems()}
 
-  return <>
-    <div className={styles.optionsContainer}>
-      <div className={styles.orderOptionsPanelHeader}>
-        <div><label>Ταξινόμηση αποτελεσμάτων ημερολογιακά: <span className={global.boldItalic}>{orderToString(order)}</span></label></div>
-        <div><label>Φίλτρο: <span className={global.boldItalic}> {category !== 'all' ? categories[category]: 'όλες οι κατηγορίες'}</span></label></div>
-
-        <div><Search /></div>
-      </div>
-
-    </div>
-    {renderPoems()}
-
-  </>
+    </>
 }
 
 export default Poems
 
 const orderToString = (vl) => {
-  if (getString(vl) === 'asc') {
-    return 'Αύξουσα'
-  }
-  return 'Φθίνουσα'
+    if (getString(vl) === 'asc') {
+        return 'Αύξουσα'
+    }
+    return 'Φθίνουσα'
 }
 
 

@@ -1,0 +1,66 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Category {
+    description: String!
+    id: ID!
+}
+
+type MinMax {
+    category: ID!
+    max: Int!
+    min: Int!
+}
+
+type Mutation {
+    addMassPoem(input: [PoemsInput!]!): Int!
+    addPoem(input: PoemsInput!): Poem!
+}
+
+type Poem {
+    authDate: String!
+    category: Category!
+    content: String!
+    createdAt: String
+    explanation: String
+    id: Int!
+    idInCategory: Int!
+    updatedAt: String
+}
+
+type Query {
+    categories: [Category]!
+    countCategories: Int!
+    countPoems: Int!
+    getPoemByCategoryId(category: ID!, idInCategory: Int!): [Poem]
+    getPoemByContent(content: String!): [Poem]
+    getPoemById(id: Int!): Poem
+    maxIdInCategory(category: ID!): Int!
+    maxIdPoems: Int!
+    minIdInCategory(category: ID!): Int!
+    minMaxByCategory: [MinMax]!
+    poems(category: ID, order: String, search: String): [Poem]!
+    status: Boolean
+}
+
+enum CacheControlScope {
+    PRIVATE
+    PUBLIC
+}
+
+input PoemsInput {
+    authDate: String!
+    category: ID!
+    content: String!
+    explanation: String
+    id: Int!
+    idInCategory: Int!
+}
+
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload

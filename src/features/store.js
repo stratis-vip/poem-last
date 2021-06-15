@@ -1,17 +1,19 @@
 import {configureStore} from '@reduxjs/toolkit'
-import contentReducer from './content-slice'
 import categoriesReducer from './categories-slice'
 import currentCategoryReducer from './current-category-slice'
 import orderReducer from './order-slice'
-import loadingReducer from './loading-slice'
+import infoReducer from './info-slice'
+import minMaxByCategoryReducer from './minmax-slice'
+import refetchQueriesReducer from './refetch-slice'
 
 const store = configureStore({
     reducer: {
-        content: contentReducer,
         categories: categoriesReducer,
         currentCategory: currentCategoryReducer,
         order: orderReducer,
-        loading:loadingReducer
+        info: infoReducer,
+        minMaxByCategory:minMaxByCategoryReducer,
+        refetchQueries:refetchQueriesReducer
     }
 })
 

@@ -5,43 +5,25 @@ import {setCategory} from "../../../features/current-category-slice";
 import {useDispatch, useSelector} from "react-redux";
 import styles from './search.module.css'
 
-import {Button, Icon, Input, Label, Modal, Select} from 'semantic-ui-react'
-
-function exampleReducer(state, action) {
-    switch (action.type) {
-        case 'close':
-            return {open: false}
-        case 'open':
-            return {open: true, size: action.size}
-        default:
-            throw new Error('Unsupported action...')
-    }
-}
+import {Button, Input, Modal, Select} from 'semantic-ui-react'
 
 const ordOptions = [
     {key: 'asc', text: 'Αύξουσα', value: 'asc'},
     {key: 'desc', text: 'Φθίνουσα', value: 'desc'},
 ]
-const Search = () => {
-    const [state, dispatchModal] = React.useReducer(exampleReducer, {
-        open: false,
-        size: undefined,
-    })
-    const {open, size} = state
 
-    const category = useSelector(s => s.currentCategory)
-    const categories = useSelector(s => s.categories)
+const Search = ({search, setSearch}) => {
+    const [open, setOpen] = useState(false)
+    const category = useSelector(s => s["currentCategory"])
+    const categories = useSelector(s => s["categories"])
     const dispatch = useDispatch()
-    const order = useSelector(s => s.order)
+    const order = useSelector(s => s["order"])
     const [options, setOptions] = useState([{key: 'all', text: 'Σε όλες τις κατηγορίες', value: 'all'}])
-
 
     useEffect(() => {
         if (categories) {
             const local = [{key: 'all', text: 'Σε όλες τις κατηγορίες', value: 'all'}]
-            for (const key of Object.keys(categories)) {
-                local.push({key, text: categories[key], value: key})
-            }
+            categories.map(category => local.push({key:category.id, text: category.description, value: category.id}))
             setOptions(local)
         }
     }, [categories])
@@ -55,21 +37,24 @@ const Search = () => {
 
     return (
         <>
-            <Button color={"green"} onClick={() => dispatchModal({type: 'open', size: 'small'})}>
+            <Button color={"green"} onClick={() => setOpen(true)}>
                 Αλλαγή
             </Button>
 
             <Modal
-                size={size}
+                size={'small'}
                 open={open}
-                onClose={() => dispatchModal({type: 'close'})}
+                onClose={() => setOpen(false)}
             >
                 <Modal.Header>Επιλογές ταξινόμησης και αναζήτησης</Modal.Header>
                 <Modal.Content>
                     <div className={styles.centerFlex}>
                         <div>
                             <label>Κείμενο αναζήτησης: <Input fluid type="text"
-                                                              placeholder="κείμενο αναζήτησης..."/></label>
+                                                              placeholder="κείμενο αναζήτησης..."
+                                                              value={search || ''}
+                                                              onChange={(evt)=>{evt.target.value.trim().length === 0 ? setSearch(null):setSearch(evt.target.value)}}
+                            /></label>
                         </div>
                         <div className={styles.optionsFlexNB}><label>Κατηγορία: <Select options={options}
                                                                                       defaultValue={category}
@@ -83,10 +68,8 @@ const Search = () => {
                 </Modal.Content>
                 <Modal.Actions>
                     <div className={styles.optionsFlexNT}>
-                        <Button positive type="submit" onClick={() => dispatchModal({type: 'close'})}>Αναζήτηση</Button>
-
-
-                        <Button negative onClick={() => dispatchModal({type: 'close'})}>
+                        <Button positive type="submit" onClick={() => setOpen(false)}>Αναζήτηση</Button>
+                        <Button negative onClick={() => setOpen(false)}>
                             Ακύρωση
                         </Button>
                     </div>
@@ -94,8 +77,6 @@ const Search = () => {
             </Modal>
         </>
     )
-
-
 }
 
 export default Search
